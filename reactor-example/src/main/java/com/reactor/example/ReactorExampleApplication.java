@@ -14,18 +14,5 @@ public class ReactorExampleApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ReactorExampleApplication.class, args);
-
-		MonoProcessor<String> promise = MonoProcessor.create();
-
-		Mono<String> result = promise.doOnSuccess(p -> LOG.info("Promise completed {}", p))
-				.doOnTerminate((s, e) -> LOG.info("Got value: {}", s))
-				.doOnError(t -> LOG.error(t.getMessage(), t))
-				.subscribe();
-
-		promise.onNext("Hello World!");
-		//promise.onError(new IllegalArgumentException("Hello Shmello! :P"));
-
-		String s = result.blockMillis(1_000);
-		LOG.info("s={}", s);
 	}
 }
