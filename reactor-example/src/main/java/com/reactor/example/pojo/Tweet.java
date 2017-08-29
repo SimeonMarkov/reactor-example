@@ -10,7 +10,7 @@ public class Tweet {
     private long id;
     private String text;
     private long createdAt;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     private User user;
 
     public Tweet() {
