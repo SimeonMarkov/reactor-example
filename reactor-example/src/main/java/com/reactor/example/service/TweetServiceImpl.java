@@ -27,10 +27,10 @@ public class TweetServiceImpl implements TweetService {
         return tweetRepository.save(tweet);
     }
 
-    @Override
-    public Tweet createTweetJson(Tweet tweet) {
+    private List<String> fillTweetJsonsDirectory(Tweet tweet) {
+        File f = new File("src/main/resources/tweets");
+        f.mkdir();
         for (int i = 0; i < 100; i++) {
-            new File("src/main/resources/tweets").mkdir();
             File tweetJson = new File("src/main/resources/tweets/tweet" + RandomStringUtils.randomAlphanumeric(10) + ".json");
             if (!tweetJson.exists()) {
                 try {
@@ -43,14 +43,12 @@ public class TweetServiceImpl implements TweetService {
                 }
             }
         }
-        return tweet;
+        return new ArrayList<String>(Arrays.asList(f.list()));
     }
 
     @Override
-    public void createZip() {
-        File f = new File("src/main/resources/tweets/");
-        List<String> jsonList = new ArrayList<>(Arrays.asList(f.list()));
-
+    public void createZip(Tweet tweet) {
+        List<String> jsonFilesNames = fillTweetJsonsDirectory(tweet);
         File zipFile = new File("src/main/resources/tweets.zip");
         if (!zipFile.exists()) {
             try {
@@ -58,7 +56,7 @@ public class TweetServiceImpl implements TweetService {
                 FileOutputStream out = new FileOutputStream(zipFile);
                 ZipOutputStream zos = new ZipOutputStream(out);
 
-                for (String json : jsonList) {
+                for (String json : jsonFilesNames) {
                     ZipEntry entry = new ZipEntry(json);
                     zos.putNextEntry(entry);
                     FileInputStream input = new FileInputStream("src/main/resources/tweets/" + json);

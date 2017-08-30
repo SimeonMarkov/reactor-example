@@ -20,14 +20,9 @@ public class TweetController {
         return tweetService.save(tweet);
     }
 
-    @PostMapping("/write")
-    public Tweet writeToJson(@RequestBody Tweet tweet) {
-        return tweetService.createTweetJson(tweet);
-    }
-
     @PostMapping("/zip")
-    public void createZip(){
-        tweetService.createZip();
+    public void createZip(@RequestBody  Tweet tweet){
+        tweetService.createZip(tweet);
     }
 
 }
