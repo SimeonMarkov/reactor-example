@@ -1,5 +1,7 @@
 package com.reactor.example.pojo;
 
+import com.google.gson.Gson;
+
 import javax.persistence.*;
 
 @Entity
@@ -46,5 +48,11 @@ public class Tweet {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

@@ -20,4 +20,9 @@ public class TweetController {
         return tweetService.save(tweet);
     }
 
+    @PostMapping("/write")
+    public Tweet writeToJson(@RequestBody Tweet tweet) {
+        return tweetService.createTweetJson(tweet);
+    }
+
 }
