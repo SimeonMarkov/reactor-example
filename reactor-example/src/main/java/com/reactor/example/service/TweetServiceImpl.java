@@ -14,7 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import static org.apache.catalina.startup.ExpandWar.deleteDir;
 
 @Component
 public class TweetServiceImpl implements TweetService {
@@ -43,7 +46,23 @@ public class TweetServiceImpl implements TweetService {
                 }
             }
         }
-        return new ArrayList<String>(Arrays.asList(f.list()));
+        return new ArrayList<>(Arrays.asList(f.list()));
+    }
+
+    private boolean deleteDirectory(File dirPath) {
+        if (dirPath.isDirectory()) {
+            String[] children = dirPath.list();
+            for (int i = 0; i < children.length; i++) {
+                boolean success = deleteDir(new File(dirPath, children[i]));
+
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+
+        System.out.println("The directory is deleted.");
+        return dirPath.delete();
     }
 
     @Override
@@ -75,5 +94,38 @@ public class TweetServiceImpl implements TweetService {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public List<File> decompress(){
+        List<File> list = new ArrayList<>();
+        try {
+            String zipFile = "src/main/resources/tweets.zip";
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+            ZipEntry ze = zis.getNextEntry();
+            while(ze != null){
+                String fileName = ze.getName();
+                File newFile = new File(fileName);
+                list.add(newFile);
+                FileOutputStream fos = new FileOutputStream(newFile);
+                byte[] bytes = fileName.getBytes();
+                int len;
+                while ((len = zis.read(bytes)) > 0) {
+                    fos.write(bytes, 0, len);
+                }
+
+                fos.close();
+                ze = zis.getNextEntry();
+            }
+
+            zis.closeEntry();
+            zis.close();
+
+            System.out.println("Done");
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }

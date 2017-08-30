@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.io.File;
+import java.util.List;
 
 @RestController
 @RequestMapping("/tweets")
@@ -23,6 +25,11 @@ public class TweetController {
     @PostMapping("/zip")
     public void createZip(@RequestBody  Tweet tweet){
         tweetService.createZip(tweet);
+    }
+
+    @PostMapping("/decompress")
+    public List<File> decompress(){
+        return tweetService.decompress();
     }
 
 }
