@@ -25,4 +25,9 @@ public class TweetController {
         return tweetService.createTweetJson(tweet);
     }
 
+    @PostMapping("/zip")
+    public void createZip(){
+        tweetService.createZip();
+    }
+
 }

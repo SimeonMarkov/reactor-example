@@ -6,4 +6,6 @@ public interface TweetService {
     Tweet save(Tweet tweet);
 
     Tweet createTweetJson(Tweet tweet);
+
+    void createZip();
 }
