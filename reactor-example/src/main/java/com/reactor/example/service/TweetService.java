@@ -1,6 +1,7 @@
 package com.reactor.example.service;
 
 import com.reactor.example.pojo.Tweet;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.util.List;
@@ -10,5 +11,7 @@ public interface TweetService {
 
     void createZip(Tweet tweet);
 
-    List<File> decompress();
+    List<File> decompress(String zipPath);
+
+    Mono<List<List<File>>> writeTweetsFromFlux(String zipPath);
 }

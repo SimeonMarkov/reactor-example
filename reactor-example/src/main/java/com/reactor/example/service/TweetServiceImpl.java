@@ -5,6 +5,8 @@ import com.reactor.example.repository.TweetRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -97,15 +99,16 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public List<File> decompress(){
+    public List<File> decompress(String zipPath){
         List<File> list = new ArrayList<>();
+        File unzippedJsonsFolder = new File("src/main/resources/unzipped/");
+        unzippedJsonsFolder.mkdir();
         try {
-            String zipFile = "src/main/resources/tweets.zip";
-            ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+            ZipInputStream zis = new ZipInputStream(new FileInputStream(zipPath));
             ZipEntry ze = zis.getNextEntry();
             while(ze != null){
                 String fileName = ze.getName();
-                File newFile = new File(fileName);
+                File newFile = new File(unzippedJsonsFolder.getPath() + File.separator + fileName);
                 list.add(newFile);
                 FileOutputStream fos = new FileOutputStream(newFile);
                 byte[] bytes = fileName.getBytes();
@@ -127,5 +130,12 @@ public class TweetServiceImpl implements TweetService {
         }
 
         return list;
+    }
+
+    @Override
+    public Mono<List<List<File>>> writeTweetsFromFlux(String zipPath) {
+        File zip = new File(zipPath);
+        return Flux.just(zip.getPath())
+                .map(s -> decompress(s)).collectList();
     }
 }
