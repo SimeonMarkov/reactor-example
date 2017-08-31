@@ -2,12 +2,14 @@ package com.reactor.example.service;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import com.reactor.example.exception.ZipNotFoundException;
 import com.reactor.example.pojo.Tweet;
 import com.reactor.example.repository.TweetRepository;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 
 import java.io.*;
@@ -25,6 +27,8 @@ public class TweetServiceImpl implements TweetService {
 
     @Autowired
     private TweetRepository tweetRepository;
+
+    private Logger logger = LoggerFactory.getLogger(TweetServiceImpl.class);
 
     @Override
     public Tweet save(Tweet tweet) {
@@ -143,12 +147,15 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public void writeTweetsFromFlux(String zipPath) {
+    public void writeTweetsFromFlux(String zipPath) throws FileNotFoundException {
+        long start = System.currentTimeMillis();
         File zip = new File(zipPath);
-        EmitterProcessor emitterProcessor = EmitterProcessor.create().connect();
+        if(!zip.exists()) {
+            throw new ZipNotFoundException("Zip not found!");
+        }
         Flux.just(zip.getPath())
-                .map(this::decompress).doOnNext(files -> files.forEach(file -> { tweetRepository.save(convertToTweet(file.getPath()));
-
-                })).parallel().subscribe(files -> emitterProcessor.onNext(new File("")));
+                .map(this::decompress).parallel().subscribe(files -> files.forEach(file -> { tweetRepository.save(convertToTweet(file.getPath()));
+                }), throwable -> logger.info(throwable.getCause().toString() + " IS THE THROWN EXCEPTION!!!"));
+        System.out.println(System.currentTimeMillis() - start + " ms");
     }
 }

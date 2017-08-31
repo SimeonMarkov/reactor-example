@@ -2,10 +2,8 @@ package com.reactor.example.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Random;
 
 @Entity
 @Table(name = "users")
@@ -14,6 +12,7 @@ public class User {
     @Id
     @GeneratedValue
     private long id;
+    @Column(unique = true)
     private String name;
     private String location;
     private int followersCount;
@@ -39,7 +38,7 @@ public class User {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name + new Random().nextInt(200);
     }
 
     public String getLocation() {

@@ -13,7 +13,7 @@ public interface TweetService {
 
     List<File> decompress(String zipPath);
 
-    void writeTweetsFromFlux(String zipPath);
+    void writeTweetsFromFlux(String zipPath) throws FileNotFoundException;
 
     Tweet convertToTweet(String filePath) throws FileNotFoundException;
 }

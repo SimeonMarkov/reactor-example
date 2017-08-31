@@ -3,10 +3,7 @@ package com.reactor.example.controller;
 import com.reactor.example.pojo.Tweet;
 import com.reactor.example.service.TweetService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 
@@ -28,7 +25,7 @@ public class TweetController {
     }
 
     @PostMapping("/decompress")
-    public void decompress(@RequestBody String zipPath){
+    public void decompress(@RequestBody String zipPath) throws FileNotFoundException{
         tweetService.writeTweetsFromFlux(zipPath);
     }
 
