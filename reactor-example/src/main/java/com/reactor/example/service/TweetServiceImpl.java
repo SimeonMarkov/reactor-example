@@ -7,6 +7,7 @@ import com.reactor.example.repository.TweetRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.EmitterProcessor;
 import reactor.core.publisher.Flux;
 
 import java.io.*;
@@ -131,24 +132,23 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public Tweet convertToTweet(String filePath) throws FileNotFoundException {
-        Gson gson = new Gson();
-        JsonReader reader = new JsonReader(new FileReader(filePath));
-        Tweet tweet = new Gson().fromJson(reader, Tweet.class);
-        return tweet;
+    public Tweet convertToTweet(String filePath) {
+        JsonReader reader = null;
+        try {
+            reader = new JsonReader(new FileReader(filePath));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new Gson().fromJson(reader, Tweet.class);
     }
 
     @Override
     public void writeTweetsFromFlux(String zipPath) {
         File zip = new File(zipPath);
+        EmitterProcessor emitterProcessor = EmitterProcessor.create().connect();
         Flux.just(zip.getPath())
-                .map(this::decompress).toStream().forEach(files -> files.stream().forEach(file -> {
-                    try {
-                        tweetRepository.save(convertToTweet(file.getPath()));
+                .map(this::decompress).doOnNext(files -> files.forEach(file -> { tweetRepository.save(convertToTweet(file.getPath()));
 
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }));
+                })).parallel().subscribe(files -> emitterProcessor.onNext(new File("")));
     }
 }
