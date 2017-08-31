@@ -1,5 +1,6 @@
 package com.reactor.example.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ public class Tweet {
     public Tweet() {
     }
 
+    @JsonIgnore
     public long getId() {
         return id;
     }

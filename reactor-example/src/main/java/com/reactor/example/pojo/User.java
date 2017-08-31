@@ -1,5 +1,7 @@
 package com.reactor.example.pojo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,12 +20,12 @@ public class User {
     private int friendsCount;
     private long createdAt;
     private String timeZone;
-    private String language;
     private boolean verified;
 
     public User() {
     }
 
+    @JsonIgnore
     public long getId() {
         return id;
     }
@@ -78,14 +80,6 @@ public class User {
 
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     public boolean isVerified() {

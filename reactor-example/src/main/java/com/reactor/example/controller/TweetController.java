@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 
-import java.io.File;
-import java.util.List;
+import java.io.FileNotFoundException;
 
 @RestController
 @RequestMapping("/tweets")
@@ -30,8 +28,13 @@ public class TweetController {
     }
 
     @PostMapping("/decompress")
-    public Mono<List<List<File>>> decompress(@RequestBody String zipPath){
-        return tweetService.writeTweetsFromFlux(zipPath);
+    public void decompress(@RequestBody String zipPath){
+        tweetService.writeTweetsFromFlux(zipPath);
+    }
+
+    @PostMapping("/convert")
+    public Tweet convert(@RequestBody String filePath) throws FileNotFoundException {
+        return tweetService.convertToTweet(filePath);
     }
 
 }

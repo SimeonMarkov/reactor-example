@@ -1,17 +1,15 @@
 package com.reactor.example.service;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
 import com.reactor.example.pojo.Tweet;
 import com.reactor.example.repository.TweetRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -133,9 +131,24 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public Mono<List<List<File>>> writeTweetsFromFlux(String zipPath) {
+    public Tweet convertToTweet(String filePath) throws FileNotFoundException {
+        Gson gson = new Gson();
+        JsonReader reader = new JsonReader(new FileReader(filePath));
+        Tweet tweet = new Gson().fromJson(reader, Tweet.class);
+        return tweet;
+    }
+
+    @Override
+    public void writeTweetsFromFlux(String zipPath) {
         File zip = new File(zipPath);
-        return Flux.just(zip.getPath())
-                .map(s -> decompress(s)).collectList();
+        Flux.just(zip.getPath())
+                .map(this::decompress).toStream().forEach(files -> files.stream().forEach(file -> {
+                    try {
+                        tweetRepository.save(convertToTweet(file.getPath()));
+
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }));
     }
 }

@@ -1,9 +1,9 @@
 package com.reactor.example.service;
 
 import com.reactor.example.pojo.Tweet;
-import reactor.core.publisher.Mono;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 public interface TweetService {
@@ -13,5 +13,7 @@ public interface TweetService {
 
     List<File> decompress(String zipPath);
 
-    Mono<List<List<File>>> writeTweetsFromFlux(String zipPath);
+    void writeTweetsFromFlux(String zipPath);
+
+    Tweet convertToTweet(String filePath) throws FileNotFoundException;
 }
