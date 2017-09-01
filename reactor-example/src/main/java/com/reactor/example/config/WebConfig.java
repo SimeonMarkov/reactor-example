@@ -6,11 +6,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+//import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource(value = {"application.properties", "hibernate.properties"})
+@PropertySource(value = {"classpath:application.properties", "classpath:hibernate.properties"})
 public class WebConfig {
 
     @Autowired

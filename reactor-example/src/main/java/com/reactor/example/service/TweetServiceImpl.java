@@ -16,6 +16,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -32,7 +33,7 @@ public class TweetServiceImpl implements TweetService {
 
     @Override
     public Tweet save(Tweet tweet) {
-        return tweetRepository.save(tweet);
+        return null;
     }
 
     private List<String> fillTweetJsonsDirectory(Tweet tweet) {
@@ -44,8 +45,11 @@ public class TweetServiceImpl implements TweetService {
                 try {
                     tweetJson.createNewFile();
                     FileOutputStream out = new FileOutputStream(tweetJson);
+                    int prefix = new Random().nextInt(101);
+                    tweet.getUser().setName(tweet.getUser().getName() + prefix);
                     byte[] bytes = tweet.toString().getBytes();
                     out.write(bytes);
+                    tweet.getUser().setName(tweet.getUser().getName().replace(String.valueOf(prefix), ""));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -2,10 +2,14 @@ package com.reactor.example.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.Gson;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Tweet {
 
     @Id
@@ -16,9 +20,6 @@ public class Tweet {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private User user;
 
-    public Tweet() {
-    }
-
     @JsonIgnore
     public long getId() {
         return id;
@@ -26,30 +27,6 @@ public class Tweet {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public long getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(long createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     @Override
